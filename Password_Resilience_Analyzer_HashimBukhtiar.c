@@ -171,7 +171,7 @@ int main() {
                 outputStrength(password, passwordStrength);
                 havePassword = 1;
             } else {
-                printf("You must enter a valid password.\n");
+                printf("Something went wrong, you must enter a valid password.\n");
             }
         } else if (option == 2) { // View strength of last tested password
             if (havePassword == 1) {
