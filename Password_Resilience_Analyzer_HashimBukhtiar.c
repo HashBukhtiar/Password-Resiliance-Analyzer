@@ -184,23 +184,45 @@ int evaluateStrength(char filename[], char* password) {
     if (pwd_length >= 12) {
         lengthyPassword = 1;
     }
-    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) + hasSpecialChar(password) + !hasRepeatingPattern(password) + hasDictionaryWord(filename, password) + lengthyPassword;
+    
+    /*printf("Lowercase %d\n", hasLowercase(password));
+    printf("Uppercase %d\n", hasUppercase(password));
+    printf("Digit %d\n", hasDigit(password));
+    printf("Special Char %d\n", hasSpecialChar(password));
+    printf("Repeating Pattern %d\n", !hasRepeatingPattern(password));
+    printf("Dictionary word %d\n", hasDictionaryWord(filename, password));
+    printf("Lengthy %d\n", lengthyPassword);*/
+
+    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) 
+    + hasSpecialChar(password) + !hasRepeatingPattern(password) 
+    + hasDictionaryWord(filename, password) + lengthyPassword;
 }
 
 void outputStrength(char password[], int pwdStrength) {
-    if (0 <= pwdStrength && pwdStrength<=2) { // Weak password
-        printf("Password Strength: Weak\n");
-    } else if (3 <= pwdStrength && pwdStrength <= 4) { // Moderate password
-        printf("Password Strength: Moderate\n");
-    } else if (5 <= pwdStrength && pwdStrength <= 6) { // Strong password
-        printf("Password Strength: Strong\n");
-    } else if (pwdStrength == 7) {
-        printf("Password Strength: Very Strong\n");
-    } else {
-        printf("Something went wrong.\n");
-        printf("Password: %s", password);
-        printf("Evaluated Strength: %d", pwdStrength);
+    // burgersss -> Weak
+    // B123123b -> Moderate
+    // C1234567c -> Strong
+    // B123$%a%$^@! -> Password Strength: Very Strong
+
+    switch (pwdStrength) {
+        case 0 ... 2:
+            printf("\033[1;31m"); // Set the text color to red
+            printf("Password Strength: Weak\n");
+            break;
+        case 3 ... 4:
+            printf("\033[1;33m"); // Set the text color to yellow
+            printf("Password Strength: Moderate\n");
+            break;
+        case 5 ... 6:
+            printf("\033[1;32m"); // Set the text color to light green
+            printf("Password Strength: Strong\n");
+            break;
+        case 7:
+            printf("\033[0;32m"); // Set the text color to dark green
+            printf("Password Strength: Very Strong\n");
+            break;
     }
+    printf("\033[0m"); // Reset the text color to default
 }
 
 int main() {
