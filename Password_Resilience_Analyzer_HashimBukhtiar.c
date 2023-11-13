@@ -122,11 +122,11 @@ int evaluateStrength(char* password) {
 }
 
 void outputStrength(char password[], int pwdStrength) {
-    if (0 <= pwdStrength && pwdStrength<=2) {
+    if (0 <= pwdStrength && pwdStrength<=2) { // Weak password
         printf("Password Strength: Weak\n");
-    } else if (3 <= pwdStrength && pwdStrength <= 4) {
+    } else if (3 <= pwdStrength && pwdStrength <= 4) { // Moderate password
         printf("Password Strength: Moderate\n");
-    } else if (pwdStrength == 5) {
+    } else if (pwdStrength >= 5) { // Strong password
         printf("Password Strength: Strong\n");
     } else {
         printf("Something went wrong.\n");
