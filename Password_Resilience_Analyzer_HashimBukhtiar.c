@@ -112,6 +112,15 @@ int hasSpecialChar(char* password) {
     return 0;
 }
 
+int hasRepeatingPattern(char* password) {
+    // If there is a repeating pattern, return 0
+    // Else return 1
+    // 123123123 -> 0
+    // thisisapwd -> 1
+    // thisisapaSSword -> 1
+    
+}
+
 int evaluateStrength(char* password) {
     int pwd_length = strlen(password);
     int lengthyPassword = 0;
