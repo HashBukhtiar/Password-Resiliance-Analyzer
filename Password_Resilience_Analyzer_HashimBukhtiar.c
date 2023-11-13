@@ -113,12 +113,22 @@ int hasSpecialChar(char* password) {
 }
 
 int hasRepeatingPattern(char* password) {
-    // If there is a repeating pattern, return 0
-    // Else return 1
-    // 123123123 -> 0
-    // thisisapwd -> 1
-    // thisisapaSSword -> 1
-    
+    // If there is a repeating pattern, return 1
+    // Else return 0
+    // 123123123 -> 1
+    // thisisapwd -> 0
+    // thiswasapaSSword -> 0
+    int length = strlen(password);
+    const int minPatternLength = 2; // Only flag sequences of at least 2 characters
+    for (int i = 0; i < length; i++) {
+        for (int j = i + minPatternLength; j < length; j++) {
+            int substringLength = j - i;
+            if (j + substringLength <= length && strncmp(password + i, password + j, substringLength) == 0) {
+                return 1; // Repeating sequence found
+            }
+        }
+    }
+    return 0; // No repeating sequence found
 }
 
 int evaluateStrength(char* password) {
@@ -127,7 +137,7 @@ int evaluateStrength(char* password) {
     if (pwd_length >= 12) {
         lengthyPassword = 1;
     }
-    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) + hasSpecialChar(password) + lengthyPassword;
+    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) + hasSpecialChar(password) + !hasRepeatingPattern(password) + lengthyPassword;
 }
 
 void outputStrength(char password[], int pwdStrength) {
@@ -135,8 +145,10 @@ void outputStrength(char password[], int pwdStrength) {
         printf("Password Strength: Weak\n");
     } else if (3 <= pwdStrength && pwdStrength <= 4) { // Moderate password
         printf("Password Strength: Moderate\n");
-    } else if (pwdStrength >= 5) { // Strong password
+    } else if (5 <= pwdStrength && pwdStrength <= 6) { // Strong password
         printf("Password Strength: Strong\n");
+    } else if (pwdStrength == 7) {
+        printf("Password Strength: Very Strong\n");
     } else {
         printf("Something went wrong.\n");
         printf("Password: %s", password);
