@@ -70,6 +70,29 @@ char* getPassword() {
     return password;
 }
 
+char** generateSubstrings(char *str, int* size) {
+    int n = strlen(str);
+    char **substrings = malloc(sizeof(char*) * n*(n+1)/2);
+    int index = 0;
+
+    for (int len = 2; len <= n; len++) { // Start from 2 to omit single characters
+        for (int i = 0; i <= n - len; i++) {
+            int j = i + len - 1;
+            char *substring = (char *)malloc(sizeof(char)*(len+1));
+            int subIndex = 0;
+
+            for (int k = i; k <= j; k++) {
+                substring[subIndex++] = str[k];
+            }
+            substring[subIndex] = '\0';
+            substrings[index++] = substring;
+        }
+    }
+
+    *size = index; // Set the size of the array
+    return substrings; // Return the array
+}
+
 int hasLowercase(char* password) {
     int pwd_length = strlen(password);
     for (int i=0; i<pwd_length; i++) {
@@ -131,13 +154,37 @@ int hasRepeatingPattern(char* password) {
     return 0; // No repeating sequence found
 }
 
-int evaluateStrength(char* password) {
+int hasDictionaryWord(char filename[], char* password) {
+    int size;
+    char** substrings = generateSubstrings(password, &size);
+
+    FILE* file = fopen(filename, "r"); // Open the file
+    if (file == NULL) {
+        printf("Could not open file\n");
+        return 0;
+    }
+
+    char line[256]; // Buffer to hold each line
+    while (fgets(line, sizeof(line), file)) {
+        line[strcspn(line, "\n")] = 0; // Remove newline character from line
+        for (int i = 0; i < size; i++) {
+            if (strcmp(substrings[i], line) == 0) { // Compare strings to see if password contains a dictionary word
+                //printf("substring: %s | line: %s\n", substrings[i], line);
+                return 0;
+            }
+        }
+    }
+    fclose(file);
+    return 1;
+}
+
+int evaluateStrength(char filename[], char* password) {
     int pwd_length = strlen(password);
     int lengthyPassword = 0;
     if (pwd_length >= 12) {
         lengthyPassword = 1;
     }
-    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) + hasSpecialChar(password) + !hasRepeatingPattern(password) + lengthyPassword;
+    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) + hasSpecialChar(password) + !hasRepeatingPattern(password) + hasDictionaryWord(filename, password) + lengthyPassword;
 }
 
 void outputStrength(char password[], int pwdStrength) {
@@ -159,6 +206,7 @@ void outputStrength(char password[], int pwdStrength) {
 int main() {
     int havePassword = 0;
     char* password;
+    const char filename[] = "dictionary_words.txt";
     while (1) {
         int option = selectOption();
         if (option == 1) { // Test new password
@@ -167,7 +215,7 @@ int main() {
             }
             password = getPassword();
             if (password != NULL) {
-                int passwordStrength = evaluateStrength(password);
+                int passwordStrength = evaluateStrength(filename, password);
                 outputStrength(password, passwordStrength);
                 havePassword = 1;
             } else {
@@ -175,7 +223,7 @@ int main() {
             }
         } else if (option == 2) { // View strength of last tested password
             if (havePassword == 1) {
-                outputStrength(password, evaluateStrength(password));
+                outputStrength(password, evaluateStrength(filename, password));
             } else {
                 printf("You have not created a password to test yet.\n");
             }
