@@ -204,7 +204,8 @@ int evaluateStrength(char filename[], char* password) {
 void outputStrength(char password[], int pwdStrength, char filename[]) {
     // burgersss -> Weak
     // B123123b -> Moderate
-    // C1234567c -> Strong
+    // C1234567c -> Moderate
+    // P@ssW0rd!Safe -> Strong
     // B123$%a%$^@! -> Password Strength: Very Strong
 
     switch (pwdStrength) {
