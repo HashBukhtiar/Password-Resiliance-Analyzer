@@ -193,12 +193,15 @@ int evaluateStrength(char filename[], char* password) {
     printf("Dictionary word %d\n", hasDictionaryWord(filename, password));
     printf("Lengthy %d\n", lengthyPassword);*/
 
-    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) 
+    /*return hasLowercase(password) + hasUppercase(password) + hasDigit(password) 
     + hasSpecialChar(password) + !hasRepeatingPattern(password) 
-    + hasDictionaryWord(filename, password) + lengthyPassword;
+    + hasDictionaryWord(filename, password) + lengthyPassword;*/
+
+    return hasLowercase(password) + hasUppercase(password) + hasDigit(password) 
+    + hasSpecialChar(password) + lengthyPassword;
 }
 
-void outputStrength(char password[], int pwdStrength) {
+void outputStrength(char password[], int pwdStrength, char filename[]) {
     // burgersss -> Weak
     // B123123b -> Moderate
     // C1234567c -> Strong
@@ -213,14 +216,16 @@ void outputStrength(char password[], int pwdStrength) {
             printf("\033[1;33m"); // Set the text color to yellow
             printf("Password Strength: Moderate\n");
             break;
-        case 5 ... 6:
-            printf("\033[1;32m"); // Set the text color to light green
-            printf("Password Strength: Strong\n");
-            break;
-        case 7:
-            printf("\033[0;32m"); // Set the text color to dark green
-            printf("Password Strength: Very Strong\n");
-            break;
+        case 5:
+            if (!hasRepeatingPattern(password) && hasDictionaryWord(filename, password)) {
+                printf("\033[0;32m"); // Set the text color to dark green
+                printf("Password Strength: Very Strong\n");
+                break;
+            } else {
+                printf("\033[1;32m"); // Set the text color to light green
+                printf("Password Strength: Strong\n");
+                break;
+            }       
     }
     printf("\033[0m"); // Reset the text color to default
 }
@@ -238,14 +243,14 @@ int main() {
             password = getPassword();
             if (password != NULL) {
                 int passwordStrength = evaluateStrength(filename, password);
-                outputStrength(password, passwordStrength);
+                outputStrength(password, passwordStrength, filename);
                 havePassword = 1;
             } else {
                 printf("Something went wrong, you must enter a valid password.\n");
             }
         } else if (option == 2) { // View strength of last tested password
             if (havePassword == 1) {
-                outputStrength(password, evaluateStrength(filename, password));
+                outputStrength(password, evaluateStrength(filename, password), filename);
             } else {
                 printf("You have not created a password to test yet.\n");
             }
